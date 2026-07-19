@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/forever-assets/assets/frontend_assets/assets'
-// Added Link to the imports
 import { NavLink, Link } from 'react-router-dom' 
 
 const Navbar = () => {
   const [visible,setVisible]=useState(false)
   return (
-    <div className='flex items-center justify-between py-5 font-medium'>
+    <div className='sticky top-0 z-50 bg-white flex items-center justify-between py-5 font-medium'>
       
-      <img src={assets.logo} className='w-36' alt="Logo" />
+      <Link to='/' ><img src={assets.logo} className='w-36' alt="Logo" /></Link>
       
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
         
@@ -58,7 +57,8 @@ const Navbar = () => {
         <img onClick={()=>setVisible(true)} src={assets.menu_icon} className='w-5 cursor-pointer sm:hidden '></img>
       </div>
      {/* sidebar menu for small screen */}
-      <div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full' : 'w-0'}`}>
+      {/* sidebar menu for small screen */}
+<div className={`fixed top-0 right-0 bottom-0 overflow-hidden bg-white transition-all z-50 ${visible ? 'w-full' : 'w-0'}`}>
         
         {/* THIS is the flex-col container. Everything must go inside it! */}
         <div className='flex flex-col text-gray-600'>
@@ -78,7 +78,7 @@ const Navbar = () => {
         
       </div>
   
-    </div> // Fixed the broken closing div tag here
+    </div> 
   )
 }
 
