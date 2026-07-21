@@ -3,9 +3,10 @@ import { ShopContext } from '../Context/ShopContext'
 import { assets } from '../assets/forever-assets/assets/frontend_assets/assets'
 import Title from '../Components/Title'
 import ProductItem from '../Components/ProductItem'
+import SearchBar from '../Components/SearchBar'
 
 const Collection = () => {
-  const { products } = useContext(ShopContext)
+  const { products,search,showsearch } = useContext(ShopContext)
   const [showfilter, setShowfilter] = useState(false)
   const [filterProduct, setfilterProduct] = useState([])
   const [category, setCategory] = useState([])
@@ -31,6 +32,9 @@ const Collection = () => {
   // FIXED: All logic (filtering AND sorting) is now in one powerful function
   const applyFilter = () => {
     let productsCopy = products.slice();
+    if(showsearch && search){
+      productsCopy=productsCopy.filter(item=>item.name.toLowerCase().includes(search.toLowerCase()))
+    }
     
     // 1. Filter by Category
     if (category.length > 0) {
@@ -63,11 +67,10 @@ const Collection = () => {
   // Now, if you check a box OR change the dropdown, the screen updates perfectly!
   useEffect(() => {
     applyFilter();
-  }, [category, subcategory, sortType, products])
+  }, [category, subcategory, sortType, products,search,showsearch])
 
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
-      
       {/* filter options */}
       <div className='min-w-60'>
         <p onClick={() => setShowfilter(!showfilter)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>
@@ -110,6 +113,7 @@ const Collection = () => {
         
       {/* right side */}
       <div className='flex-1'>
+     
         <div className='flex justify-between text-base sm:text-2xl mb-4'>
           <Title text1={'ALL'} text2={'COLLECTIONS'} />
           <select onChange={(e) => setsortType(e.target.value)} className='border-2 border-gray-300 text-sm px-2'>
