@@ -11,6 +11,8 @@ import Signup from './Pages/Signup'
 import Orders from './Pages/Orders'
 import Product from './Pages/Product'
 import PlaceOrder from './Pages/PlaceOrder'
+import Footer from './Components/Footer'
+import OurPolicy from './Components/OurPolicy'
 
 
 const App = () => {
@@ -28,7 +30,9 @@ const App = () => {
       <Route path='/Orders' element={<Orders />} />
       <Route path='/Product/:ProductId' element={<Product/>} />
       <Route path='/PlaceOrder' element={<PlaceOrder/>} />
+
       </Routes>
+      <Footer/>
     </div>
   )
 }

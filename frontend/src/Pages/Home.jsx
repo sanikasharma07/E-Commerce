@@ -10,7 +10,10 @@ const Home = () => {
       <Hero/>
       <LatestCollection/>
       <BestSeller/>
-      <OurPolicy/>
+      <div id="privacy">
+        <OurPolicy/>
+      </div>
+      
       <NewsLetterBox/>
     </div>
   )
