@@ -14,11 +14,13 @@ import PlaceOrder from './Pages/PlaceOrder'
 import Footer from './Components/Footer'
 import OurPolicy from './Components/OurPolicy'
 import SearchBar from './Components/SearchBar'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[pvw]'>
+      <ToastContainer/>
       <Navbar/>
       <SearchBar/>
       <Routes>

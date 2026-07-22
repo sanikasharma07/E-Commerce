@@ -2,13 +2,15 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom' // FIXED 1: Imported useParams
 import { ShopContext } from '../Context/ShopContext';
 import { assets } from '../assets/forever-assets/assets/frontend_assets/assets';
+import RelatedProduct from '../Components/RelatedProduct';
 
 const Product = () => {
   const { ProductId } = useParams();
-  const { products,currency } = useContext(ShopContext)
+  const { products,currency,addtocart } = useContext(ShopContext)
   const [productdata, setproductdata] = useState(false)
   const [image, setimage] = useState('')
   const [size,setsize]=useState("")
+
 
   const fetchproductdata = async () => {
     products.map((item) => {
@@ -79,7 +81,7 @@ const Product = () => {
       ))}
     </div>
   </div>
-    <button className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700 '>ADD TO CART</button>
+    <button onClick={()=>addtocart(productdata._id,size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700 '>ADD TO CART</button>
     <hr  className='mt-8 sm:w-4/5'/>
     <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
 <p>100% Orignal Product.</p>
@@ -89,6 +91,18 @@ const Product = () => {
          </div>
       </div>
       {/*Description & Review Section */}
+      <div className='mt-20'>
+        <div className='flex'>
+         <b className='border px-5 py-3 text-sm'>Description</b>
+         <b className='border px-5 py-3 text-sm'>Reviews (122)</b>
+        </div>
+        <div className='flex flex-col gap-4 broder px-6 py-6 text-sm text-gray-500'>
+  <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos incidunt odio debitis perferendis ab quibusdam!Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos incidunt odio debitis perferendis ab quibusdam!Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos incidunt odio debitis perferendis ab quibusdam!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla dicta aliquam dolorem, maiores sequi enim.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos incidunt odio debitis perferendis ab quibusdam!</p>
+        </div>
+      </div>
+      {/*Related Products */}
+      <RelatedProduct category={productdata.category} subCategory={productdata.subCategory} />
     </div>
   ) : <div className='opacity-0'></div>
 }
