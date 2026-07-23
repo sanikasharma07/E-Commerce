@@ -6,7 +6,7 @@ import Collection from './Pages/Collection'
 import About from './Pages/About'
 import Contact from './Pages/Contact'
 import Cart from './Pages/Cart'
-import Signin from './Pages/Signin'
+import Login from './Pages/Login'
 import Signup from './Pages/Signup'
 import Orders from './Pages/Orders'
 import Product from './Pages/Product'
@@ -29,7 +29,7 @@ const App = () => {
       <Route path='/About' element={<About/>} />
       <Route path='/Contact' element={<Contact/>} />
       <Route path='/Cart' element={<Cart/>} />
-      <Route path='/Signin' element={<Signin/>} />
+      <Route path='/Login' element={<Login/>} />
       <Route path='Signup' element={<Signup/>} />
       <Route path='/Orders' element={<Orders />} />
       <Route path='/Product/:ProductId' element={<Product/>} />
