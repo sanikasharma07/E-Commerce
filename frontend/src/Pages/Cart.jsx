@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../Context/ShopContext'
 import Title from '../Components/Title'
 import { assets } from '../assets/forever-assets/assets/frontend_assets/assets'
+import CartTotal from '../Components/CartTotal'
 
 const Cart = () => {
-  const {products,cartitems,currency,updatequantity}=useContext(ShopContext)
+  const {products,cartitems,currency,updatequantity,navigate}=useContext(ShopContext)
   const [cartdata,setcartdata]=useState([])
 useEffect(()=>{
   const tempdata=[];
@@ -47,7 +48,14 @@ useEffect(()=>{
           })
         }
       </div>
-     
+     <div className='flex justify-end my-20'>
+<div className='w-full sm:w-[450px]'>
+   <CartTotal/>
+   <div className='w-full text-end'>
+<button onClick={()=>navigate('/PlaceOrder')} className='bg-black text-white text-sm my-8 px-8 py-3'>PROCEED TO CHECKOUT</button>
+   </div>
+</div>
+     </div>
     </div>
   )
 }
