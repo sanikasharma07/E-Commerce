@@ -5,6 +5,9 @@ import {v2 as cloudinary,v2} from 'cloudinary'
 // for adding product
 const addProduct=async(req,res)=>{
 try {
+   console.log("--- INCOMING REQUEST ---");
+      console.log("BODY DATA:", req.body);
+      console.log("FILE DATA:", req.files);
       const{name,sizes,description,price,category,subCategory,bestseller}=req.body
       const image1 = req.files.image1 && req.files.image1[0]
     const image2 = req.files.image2 && req.files.image2[0]
