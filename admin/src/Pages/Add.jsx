@@ -1,58 +1,70 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/admin_assets/assets'
-import  axios from 'axios' 
-import {backendUrl} from '../App'
+import axios from 'axios' 
+import { backendUrl } from '../App'
 import { toast } from 'react-toastify'
 
-const Add = ({token}) => {
-  const [image1,setimage1]=useState(false)
-  const [image2,setimage2]=useState(false)
-  const [image3,setimage3]=useState(false)
-  const [image4,setimage4]=useState(false)
-  const [name,setname]=useState('')  
-  const [description,setdescription]=useState('')
-  const [price,setprice]=useState('')
-  const [category,setcategory]=useState('Men')
-  const [subcategory,setsubcategory]=useState('Topwear')
-  const [bestseller,setbestseller]=useState(false)
-  const [sizes,setsizes]=useState([])
-const submithandler=async(e)=>{
-e.preventDefault()
-try {
-  const formData=new FormData()
-  formData.append("name",name)
-  formData.append("description",description)
-  formData.append("price",price)
-  formData.append("category",category)
-  formData.append("subCategory",subcategory)
-  formData.append("bestseller",bestseller)
-  formData.append("sizes",JSON.stringify(sizes))
-  image1 && formData.append("image1",image1)
-  image2 &&  formData.append("image2",image2)
-  image3 && formData.append("image3",image3)
-  image4 && formData.append("image4",image4)
+const Add = ({ token }) => {
+  const [image1, setimage1] = useState(false)
+  const [image2, setimage2] = useState(false)
+  const [image3, setimage3] = useState(false)
+  const [image4, setimage4] = useState(false)
+  const [name, setname] = useState('')  
+  const [description, setdescription] = useState('')
+  const [price, setprice] = useState('')
+  const [category, setcategory] = useState('Men')
+  const [subcategory, setsubcategory] = useState('Topwear')
+  const [bestseller, setbestseller] = useState(false)
+  const [sizes, setsizes] = useState([])
+  
+  // NEW: Add a loading state variable
+  const [loading, setLoading] = useState(false)
 
-  const response=await axios.post(backendUrl +"/api/product/add",formData,{headers:{token}})
-  if(response.data.status){
-    toast.success(response.data.message)
-    setname('')
-    setdescription('')
-     setimage1(false)
-     setimage2(false)
-     setimage3(false)
-     setimage4(false)
-     setprice('')
-    setbestseller(false)
+  const submithandler = async (e) => {
+    e.preventDefault()
+    
+    // NEW: Turn on the loading state as soon as they click
+    setLoading(true)
+    
+    try {
+      const formData = new FormData()
+      formData.append("name", name)
+      formData.append("description", description)
+      formData.append("price", price)
+      formData.append("category", category)
+      formData.append("subCategory", subcategory)
+      formData.append("bestseller", bestseller)
+      formData.append("sizes", JSON.stringify(sizes))
+      image1 && formData.append("image1", image1)
+      image2 &&  formData.append("image2", image2)
+      image3 && formData.append("image3", image3)
+      image4 && formData.append("image4", image4)
 
+      const response = await axios.post(backendUrl +"/api/product/add", formData, { headers: { token } })
+      
+      if(response.data.status){
+        toast.success(response.data.message)
+        setname('')
+        setdescription('')
+        setimage1(false)
+        setimage2(false)
+        setimage3(false)
+        setimage4(false)
+        setprice('')
+        setbestseller(false)
+        setsizes([]) // (Added this so sizes reset too!)
+      }
+      else{
+        toast.error(response.data.message)
+      }
+
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      // NEW: Turn off the loading state no matter what happens (success or fail)
+      setLoading(false)
+    }
   }
-  else{
-    toast.error(response.data.message)
-  }
-
-} catch (error) {
-  toast.error(error.message)
-}
-}
 
   return (
     <form onSubmit={submithandler} className='flex flex-col w-full items-start gap-3' >
@@ -60,19 +72,19 @@ try {
         <p className='mb-2'>Upload Image</p>
         <div className='flex gap-2'>
           <label htmlFor="image1">
-            <img className='w-20' src={!image1?assets.upload_area:URL.createObjectURL(image1)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image1?assets.upload_area:URL.createObjectURL(image1)} alt="" />
             <input  onChange={(e)=>setimage1(e.target.files[0])} type="file" id='image1' hidden />
           </label>
            <label htmlFor="image2">
-            <img className='w-20' src={!image2?assets.upload_area:URL.createObjectURL(image2)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image2?assets.upload_area:URL.createObjectURL(image2)} alt="" />
             <input onChange={(e)=>setimage2(e.target.files[0])}  type="file" id='image2' hidden />
           </label>
            <label htmlFor="image3">
-            <img className='w-20' src={!image3?assets.upload_area:URL.createObjectURL(image3)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image3?assets.upload_area:URL.createObjectURL(image3)} alt="" />
             <input onChange={(e)=>setimage3(e.target.files[0])}  type="file" id='image3' hidden />
           </label>
            <label htmlFor="image4">
-            <img className='w-20' src={!image4?assets.upload_area:URL.createObjectURL(image4)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image4?assets.upload_area:URL.createObjectURL(image4)} alt="" />
             <input onChange={(e)=>setimage4(e.target.files[0])}  type="file" id='image4' hidden />
           </label>
         </div>
@@ -104,7 +116,7 @@ try {
         </div>
         <div>
           <p className='mb-2'>Product Price</p>
-          <input onChange={(e)=>setprice(e.target.value)} value={price}   className='w-full px-3 py-2 sm:w-[120px]' type="Number" placeholder='25' min={0}/>
+          <input onChange={(e)=>setprice(e.target.value)} value={price}   className='w-full px-3 py-2 sm:w-[120px]' type="Number" placeholder='25' min={0} required/>
           </div> 
       </div>
       <div>
@@ -131,7 +143,15 @@ try {
         <input onChange={()=>setbestseller(!bestseller)} checked={bestseller} type="checkbox" id='bestseller' />
         <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
       </div>
-      <button type='submit' className='w-28 py-3 mt-4 bg-black text-white'>ADD</button>
+      
+      {/* NEW: Disable button and change appearance when loading */}
+      <button 
+        type='submit' 
+        disabled={loading}
+        className={`w-28 py-3 mt-4 text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-black'}`}
+      >
+        {loading ? 'ADDING...' : 'ADD'}
+      </button>
     </form>
   )
 }

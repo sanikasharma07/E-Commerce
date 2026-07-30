@@ -13,7 +13,7 @@ try {
     const image2 = req.files.image2 && req.files.image2[0]
     const image3 = req.files.image3 && req.files.image3[0]
     const image4 = req.files.image4 && req.files.image4[0]
-  if(!image1){
+  if(!image1 && !image2 && !image3 && !image4){
    return res.json({status:false,message:"Please enter atleast one image"})
   }
  const images=[image1,image2,image3,image4].filter((item)=>item!==undefined)
@@ -60,7 +60,7 @@ const listProducts=async(req,res)=>{
 const removeProduct=async(req,res)=>{
 try {
     await Product.findByIdAndDelete(req.body.id)
-     res.json({success:true,message:"Product remove"})
+     res.json({success:true,message:"Product removed"})
 
 } catch (error) {
      res.json({status:false,message:error.message})
