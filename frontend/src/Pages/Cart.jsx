@@ -8,7 +8,8 @@ const Cart = () => {
   const {products,cartitems,currency,updatequantity,navigate}=useContext(ShopContext)
   const [cartdata,setcartdata]=useState([])
 useEffect(()=>{
-  const tempdata=[];
+  if(products.length>0){
+ const tempdata=[];
   for(const items in cartitems){
     for(const item in cartitems[items]){
       if(cartitems[items][item]>0) tempdata.push({
@@ -19,7 +20,9 @@ useEffect(()=>{
     }
   }
   setcartdata(tempdata)
-},[cartitems])
+  }
+ 
+},[cartitems,products])
   return (
     <div className='border-t pt-14'>
       <div className='text-2xl mb-3'>

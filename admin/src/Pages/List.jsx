@@ -11,9 +11,7 @@ const List = ({ token }) => {
   const fetchlist = async () => {
    try {
     // FIX 2: Send the token in the headers
-    const response = await axios.get(backendUrl + '/api/product/list', {
-        headers: { token }
-    })
+    const response = await axios.get(backendUrl + '/api/product/list')
     
     // Check your console to see exactly how your backend sends the array back!
     
