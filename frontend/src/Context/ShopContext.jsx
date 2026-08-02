@@ -79,13 +79,16 @@ const ShopContextProvider = (props) => {
         return totalCount;
     }
 
-    const getcartamount=()=>{
-        let totalamount=0;
-        for(const items in cartitems){
-            let itemsinfo=products.find((product)=>product._id===items)
-            for(const item in cartitems[items]){
+  const getcartamount = () => {
+        let totalamount = 0;
+        for (const items in cartitems) {
+            let itemsinfo = products.find((product) => product._id === items)
+            for (const item in cartitems[items]) {
                 try {
-                    if(cartitems[items][item]>0) totalamount+=(cartitems[items][item]*itemsinfo.price)
+                    // FIX: We added 'itemsinfo &&' to ensure the product exists before checking its price!
+                    if (itemsinfo && cartitems[items][item] > 0) {
+                        totalamount += (cartitems[items][item] * itemsinfo.price)
+                    }
                 } catch (error) {
                     console.log(error)
                 }
