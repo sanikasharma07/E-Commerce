@@ -1,4 +1,4 @@
-import { Product } from "../models/productmodel.js"
+import { Product } from "../models/abc.js"
 import {v2 as cloudinary,v2} from 'cloudinary'
 
 
