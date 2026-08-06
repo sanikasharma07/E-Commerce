@@ -9,10 +9,13 @@ const Orders = ({token}) => {
      const [orders,setOrders] =useState([])
      const [status,setstatus]=useState('Order Placed')
      const getOrders=async()=>{
+      if(!token){
+        return null;
+      }
       try{
   const response=await axios.post(backendUrl+'/api/order/list',{},{headers:{token}})
   console.log(response.data.orders) 
-  setOrders(response.data.orders)
+  setOrders(response.data.orders.reverse())
 
       }catch(error){
         console.log(error)

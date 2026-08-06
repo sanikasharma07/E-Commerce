@@ -4,6 +4,7 @@ import CartTotal from '../Components/CartTotal'
 import { assets } from '../assets/forever-assets/assets/frontend_assets/assets'
 import { ShopContext } from '../Context/ShopContext'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const PlaceOrder = () => {
   const [method,setmethod]=useState('cod')
@@ -23,10 +24,65 @@ const PlaceOrder = () => {
     const value=event.target.value
     setformData((prev)=>({...prev,[name]:value}))
   }
-
+const initPay = (order) => {
+  
+    const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Order Payment',
+        description: 'Order Payment',
+        order_id: order.id,
+        receipt: order.receipt,
+        prefill: {
+            name: formData.firstname + " " + formData.lastname,
+            email: formData.email,
+            contact: formData.phone
+        },
+        handler: async (response) => {
+            try {
+                const { data } = await axios.post(backendURL + '/api/order/verifyRazorpay', response, { headers: { token } })
+                if (data.success) {
+                    navigate('/Orders')
+                    setcartitems({})
+                }
+            } catch (error) {
+                toast.error(error.message)
+            }
+        },
+        // FIX 4: Actively listen for the user closing the window!
+        modal: {
+            ondismiss: async function () {
+                // Tells backend to delete the order using the order.receipt (which is the MongoDB ID)
+                await axios.post(backendURL + '/api/order/verifyRazorpay', { isCancelled: true, orderId: order.receipt }, { headers: { token } })
+                toast.error("Payment Cancelled")
+            }
+        }
+    }
+    const rzp = new window.Razorpay(options)
+    
+    // FIX 5: Actively listen for failed test cards!
+    rzp.on('payment.failed', async function (response) {
+        await axios.post(backendURL + '/api/order/verifyRazorpay', { isCancelled: true, orderId: order.receipt }, { headers: { token } })
+        toast.error("Payment Failed")
+    })
+    
+    rzp.open()
+}
   const {navigate,backendURL,token,cartitems,setcartitems,getcartamount,delivery_fee,products}=useContext(ShopContext)
 const onSubmitHandler = async (event) => {
     event.preventDefault()
+    if (!token) {
+        toast.error("Please login first to place an order!");
+        navigate('/login'); // This will teleport them to the login page
+        return; // This stops the rest of the payment code from running!
+    }
+    // FIX 1: Manually double-check that the crucial fields are NOT empty
+    if (!formData.firstname || !formData.lastname || !formData.email || !formData.street || !formData.phone) {
+        toast.error("Please fill out all required delivery details!")
+        return; // This immediately stops the function so the order DOES NOT place!
+    }
+
     try {
         let orderItems = []
 
@@ -36,7 +92,6 @@ const onSubmitHandler = async (event) => {
                     // Find the product in the database
                     const foundProduct = products.find(product => product._id === items)
                     
-                    // FIX: Make sure the product actually exists before cloning it!
                     if (foundProduct) {
                         const itemInfo = structuredClone(foundProduct)
                         itemInfo.size = item
@@ -45,6 +100,12 @@ const onSubmitHandler = async (event) => {
                     }
                 }
             }
+        }
+
+        // FIX 2: Block the user from placing an order if their cart is completely empty!
+        if (orderItems.length === 0) {
+            toast.error("Your cart is empty! Please add items before checking out.")
+            return; // Stops the function
         }
 
         const orderData = {
@@ -64,6 +125,23 @@ const onSubmitHandler = async (event) => {
                     toast.error(response.data.message)
                 }
                 break;
+                case 'stripe':
+                 const responsestripe = await axios.post(backendURL+'/api/order/stripe', orderData, { headers: { token } })
+
+                 if (responsestripe.data.success) {
+                  const { session_url } = responsestripe.data
+                  window.location.replace(session_url)
+                 }
+                 else {
+                  toast.error(responsestripe.data.message)
+                 }
+                break;
+                case 'razorpay':
+                 const responseRazorpay= await axios.post(backendURL+'/api/order/razorpay',orderData,{headers:{token}})
+                if(responseRazorpay.data.success){
+                  initPay(responseRazorpay.data.order)
+                }
+                break;
             default:
                 break;
         }
@@ -71,7 +149,7 @@ const onSubmitHandler = async (event) => {
         console.log(error)
         toast.error(error.message)
     }
-  }
+}
   return (
   <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h[80vh] border-t'>
       {/*Left Side */}
